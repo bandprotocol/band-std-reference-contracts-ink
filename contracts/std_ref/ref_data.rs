@@ -1,9 +1,11 @@
-use ink::storage::traits::{StorageLayout};
-use scale::{Encode, Decode};
-use scale_info::TypeInfo;
+use scale::{Decode, Encode};
 
-#[derive(StorageLayout, Encode, Decode)]
-#[cfg_attr(feature = "std", derive(TypeInfo))]
+#[derive(Encode, Decode)]
+#[cfg_attr(
+    feature = "std",
+    derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
+)]
+
 pub struct RefDatum {
     pub rate: u64,
     pub resolve_time: u64,

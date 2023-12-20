@@ -6,6 +6,7 @@ mod reference_data;
 #[ink::contract]
 mod std_ref {
     use ink::env::set_code_hash;
+    use ink::prelude::vec::Vec;
     use ink::storage::Mapping;
 
     use crate::constant::{E9, USD};
@@ -171,7 +172,8 @@ mod std_ref {
         }
 
         /// Returns the reference data for a given symbol
-        pub fn get_reference_data(&mut self, symbol_pair: &(Hash, Hash)) -> Result<ReferenceData> {
+        #[ink(message)]
+        pub fn get_reference_data(&mut self, symbol_pair: (Hash, Hash)) -> Result<ReferenceData> {
             let base = self.get_ref_data(symbol_pair.0)?;
             let quote = self.get_ref_data(symbol_pair.1)?;
 
@@ -179,12 +181,13 @@ mod std_ref {
         }
 
         /// Returns
+        #[ink(message)]
         pub fn get_reference_data_bulk(
             &mut self,
-            symbol_pair: &Vec<(Hash, Hash)>,
+            symbol_pair: Vec<(Hash, Hash)>,
         ) -> Vec<Result<ReferenceData>> {
             symbol_pair
-                .iter()
+                .into_iter()
                 .map(|pair| self.get_reference_data(pair))
                 .collect()
         }
@@ -266,7 +269,7 @@ mod std_ref {
                 .iter()
                 .map(|(s, _)| (*s, Hash::from(USD)))
                 .collect();
-            let rd = std_ref.get_reference_data_bulk(&symbol_pairs);
+            let rd = std_ref.get_reference_data_bulk(symbol_pairs);
 
             for ((_, o), r) in symbol_rates.iter().zip(rd) {
                 assert_eq!((o * E9) as u128, r.unwrap().rate);
@@ -301,7 +304,7 @@ mod std_ref {
                 .iter()
                 .map(|(s, _)| (*s, Hash::from(USD)))
                 .collect();
-            let rd = std_ref.get_reference_data_bulk(&symbol_pairs);
+            let rd = std_ref.get_reference_data_bulk(symbol_pairs);
 
             for ((_, o), r) in symbol_rates.iter().zip(rd) {
                 assert_eq!((o * E9) as u128, r.unwrap().rate);
@@ -336,7 +339,7 @@ mod std_ref {
                 .iter()
                 .map(|(s, _)| (*s, Hash::from(USD)))
                 .collect();
-            let rd = std_ref.get_reference_data_bulk(&symbol_pairs);
+            let rd = std_ref.get_reference_data_bulk(symbol_pairs);
 
             for ((_, o), r) in symbol_rates.iter().zip(rd) {
                 assert_eq!((o * E9) as u128, r.unwrap().rate);
