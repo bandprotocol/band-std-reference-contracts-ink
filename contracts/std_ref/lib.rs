@@ -13,13 +13,13 @@ mod std_ref {
     use crate::ref_data::RefDatum;
     use crate::reference_data::ReferenceData;
 
-    /// Defines the storage of your contract.
-    /// Add new fields to the below struct in order
-    /// to add new static storage fields to your contract.
     #[ink(storage)]
     pub struct StandardReference {
+        /// Address of admin who can grant/revoke relayers
         admin: AccountId,
+        /// Mapping of the granted relayers
         relayers: Mapping<AccountId, ()>,
+        /// Mapping from hash of symbol to price datum
         ref_data: Mapping<Hash, RefDatum>,
     }
 
@@ -89,6 +89,17 @@ mod std_ref {
         /// Checks if caller is relayer.
         #[ink(message)]
         pub fn is_relayer(&self, relayer: AccountId) -> bool {
+            self.is_relayer_impl(&relayer)
+        }
+
+        /// Checks if caller is relayer.
+        ///
+        /// # Note
+        ///
+        /// Prefer to call this method over `is_relayer` since this
+        /// works using references which are more efficient in Wasm.
+        #[inline]
+        fn is_relayer_impl(&self, relayer: &AccountId) -> bool {
             self.relayers.contains(relayer)
         }
 
@@ -116,6 +127,37 @@ mod std_ref {
             Ok(())
         }
 
+        /// Returns the reference data for a given symbol
+        #[ink(message)]
+        pub fn get_reference_data(&mut self, symbol_pair: (Hash, Hash)) -> Result<ReferenceData> {
+            let base = self.get_ref_data(&symbol_pair.0)?;
+            let quote = self.get_ref_data(&symbol_pair.1)?;
+
+            ReferenceData::from_ref_data_pair(base, quote)
+        }
+
+        /// Returns the reference data for multiple bas/quote at once
+        #[ink(message)]
+        pub fn get_reference_data_bulk(
+            &mut self,
+            symbol_pair: Vec<(Hash, Hash)>,
+        ) -> Vec<Result<ReferenceData>> {
+            symbol_pair
+                .into_iter()
+                .map(|pair| self.get_reference_data(pair))
+                .collect()
+        }
+
+        /// Returns the ref data for a given symbol.
+        #[inline]
+        fn get_ref_data(&mut self, symbol: &Hash) -> Result<RefDatum> {
+            if *symbol == Hash::from(USD) {
+                return Ok(RefDatum::new(E9, Self::env().block_timestamp(), 0));
+            }
+
+            self.ref_data.get(symbol).ok_or(Error::PairDoesNotExist)
+        }
+
         /// Relays the data to the contract
         #[ink(message)]
         pub fn relay(
@@ -124,7 +166,7 @@ mod std_ref {
             resolve_time: Timestamp,
             request_id: u64,
         ) -> Result<()> {
-            if !self.is_relayer(self.env().caller()) {
+            if !self.is_relayer_impl(&self.env().caller()) {
                 return Err(Error::Unauthorized);
             }
 
@@ -142,7 +184,7 @@ mod std_ref {
             Ok(())
         }
 
-        /// Relays the data to the contract without any checks
+        /// Relays the data to the contract without checking timestamp
         #[ink(message)]
         pub fn force_relay(
             &mut self,
@@ -150,7 +192,7 @@ mod std_ref {
             resolve_time: Timestamp,
             request_id: u64,
         ) -> Result<()> {
-            if !self.is_relayer(self.env().caller()) {
+            if !self.is_relayer_impl(&self.env().caller()) {
                 return Err(Error::Unauthorized);
             }
 
@@ -161,41 +203,8 @@ mod std_ref {
 
             Ok(())
         }
-
-        /// Returns the ref data for a given symbol.
-        fn get_ref_data(&mut self, symbol: Hash) -> Result<RefDatum> {
-            if symbol == Hash::from(USD) {
-                return Ok(RefDatum::new(E9, Self::env().block_timestamp(), 0));
-            }
-
-            self.ref_data.get(symbol).ok_or(Error::PairDoesNotExist)
-        }
-
-        /// Returns the reference data for a given symbol
-        #[ink(message)]
-        pub fn get_reference_data(&mut self, symbol_pair: (Hash, Hash)) -> Result<ReferenceData> {
-            let base = self.get_ref_data(symbol_pair.0)?;
-            let quote = self.get_ref_data(symbol_pair.1)?;
-
-            ReferenceData::from_ref_data_pair(base, quote)
-        }
-
-        /// Returns
-        #[ink(message)]
-        pub fn get_reference_data_bulk(
-            &mut self,
-            symbol_pair: Vec<(Hash, Hash)>,
-        ) -> Vec<Result<ReferenceData>> {
-            symbol_pair
-                .into_iter()
-                .map(|pair| self.get_reference_data(pair))
-                .collect()
-        }
     }
 
-    /// Unit tests in Rust are normally defined within such a `#[cfg(test)]`
-    /// module and test functions are marked with a `#[test]` attribute.
-    /// The below code is technically just normal Rust code.
     #[cfg(test)]
     mod tests {
         use super::*;

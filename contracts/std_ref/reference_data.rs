@@ -3,10 +3,8 @@ use crate::ref_data::RefDatum;
 use crate::std_ref::Error;
 
 #[derive(scale::Decode, scale::Encode)]
-#[cfg_attr(
-    feature = "std",
-    derive(scale_info::TypeInfo, ink::storage::traits::StorageLayout)
-)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+
 pub struct ReferenceData {
     pub rate: u128,
     pub base_resolve_time: u64,
