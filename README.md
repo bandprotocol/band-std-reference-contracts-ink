@@ -121,6 +121,13 @@ The result from the `get_reference_data` function
 }
 ```
 
+and the results can be interpreted as:
+
+- BTC/USD
+    - `rate = 45222.98 BTC/USD`
+    - `lastUpdatedBase = 1704261434`
+    - `lastUpdatedQuote = 1704261434`
+
 #### Bulk Query
 
 This example demonstrates how to perform bulk queries for multiple cryptocurrency pairs using the get_reference_data_bulk function.
@@ -153,3 +160,14 @@ The result from the `get_reference_data_bulk` function
   },
 ]
 ```
+
+and the results can be interpreted as:
+
+- BTC/USD
+    - `rate = 45222.98 BTC/USD`
+    - `lastUpdatedBase = 1704261434`
+    - `lastUpdatedQuote = 1704261434`
+- ETH/USD
+    - `rate = 2378.48 ETH/USD`
+    - `lastUpdatedBase = 1704261434`
+    - `lastUpdatedQuote = 1704261434`
