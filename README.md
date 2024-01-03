@@ -107,7 +107,7 @@ To query the price of a cryptocurrency pair, you need to first hash the symbols 
 - Hash("BTC") = "0000000000000000000000000000000000000000000000000000000000425443"
 - Hash("USD") = "0000000000000000000000000000000000000000000000000000000000555344"
 
-![get_reference_data](../band-std-reference-contracts-ink/img/get_reference_data.png)
+![get_reference_data](img/get_reference_data.png)
 
 The result from the `get_reference_data` function
 
@@ -131,7 +131,7 @@ Before making a bulk query, you need to hash the symbols of the base and quote c
 - Hash("ETH") = "0000000000000000000000000000000000000000000000000000000000455448"
 - Hash("USD") = "0000000000000000000000000000000000000000000000000000000000555344"
 
-![get_reference_data_bulk](../band-std-reference-contracts-ink/img/get_reference_data_bulk.png)
+![get_reference_data_bulk](/img/get_reference_data_bulk.png)
 
 The result from the `get_reference_data_bulk` function
 
