@@ -96,6 +96,8 @@ pub struct ReferenceData {
 
 ### Using the Contracts UI
 
+This example use [StdReferenceBasic contract](https://contracts-ui.substrate.io/contract/Yjj2DQA4AznhucyvoYVyNXLqZu6KVDKuC3xvjt7oVF5ucZ1) on Astar Shibuya.
+
 #### Single Query
 
 This example demonstrates how to query the price of cryptocurrencies, such as BTC/USD and ETH/USD, using the provided hashing function and the get_reference_data function.
@@ -105,8 +107,7 @@ To query the price of a cryptocurrency pair, you need to first hash the symbols 
 - Hash("BTC") = "0000000000000000000000000000000000000000000000000000000000425443"
 - Hash("USD") = "0000000000000000000000000000000000000000000000000000000000555344"
 
-
-![get_reference_data](https://hackmd.io/_uploads/HkJYmjzOT.png)
+![get_reference_data](../band-std-reference-contracts-ink/img/get_reference_data.png)
 
 The result from the `get_reference_data` function
 
@@ -130,7 +131,7 @@ Before making a bulk query, you need to hash the symbols of the base and quote c
 - Hash("ETH") = "0000000000000000000000000000000000000000000000000000000000455448"
 - Hash("USD") = "0000000000000000000000000000000000000000000000000000000000555344"
 
-![get_reference_data_bulk](https://hackmd.io/_uploads/rJgDwif_T.png)
+![get_reference_data_bulk](../band-std-reference-contracts-ink/img/get_reference_data_bulk.png)
 
 The result from the `get_reference_data_bulk` function
 
