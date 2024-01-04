@@ -96,7 +96,7 @@ pub struct ReferenceData {
 
 ### Using the Contracts UI
 
-This example use [StdReferenceBasic contract](https://contracts-ui.substrate.io/contract/Yjj2DQA4AznhucyvoYVyNXLqZu6KVDKuC3xvjt7oVF5ucZ1) on Astar Shibuya.
+This example use [StdReferenceBasic contract](https://contracts-ui.substrate.io/contract/WiTDVGWuPawbS2ysrE78EpU7Ky3M5WEsZzGN95B5YuPn6Kx) on Astar Shibuya.
 
 #### Single Query
 
