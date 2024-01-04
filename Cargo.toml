@@ -1,0 +1,3 @@
+[workspace]
+members = ["contracts/std_ref"]
+resolver = "2"
