@@ -1,5 +1,5 @@
 [package]
-name = "astar-crypto-price"
+name = "astar-crypto-price-testnet"
 version = "0.1.0"
 authors = ["Band Protocol <dev@bandprotocol.com>"]
 edition = "2021"
