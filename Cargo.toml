@@ -1,3 +1,7 @@
 [workspace]
-members = ["contracts/std_ref"]
+members = [
+    "contracts/std_ref",
+    "oracle_scripts/mainnet",
+    "oracle_scripts/testnet",
+]
 resolver = "2"
