@@ -84,7 +84,7 @@ async def get_usdt_usd_rate() -> Decimal:
 
 async def get_prices(symbols: List[str]) -> List[str]:
     """
-    Uses the CCXT library to retrieve the prices. Return list of prices
+    Gets the prices of the requested symbols.
     Args:
         symbols: a list of symbols to get the prices
     Returns:
