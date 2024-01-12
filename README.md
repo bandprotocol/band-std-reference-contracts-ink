@@ -27,20 +27,20 @@ docker run --rm -it -v $(pwd):/contracts/std_ref --platform linux/amd64 parityte
   cargo contract build --release --manifest-path=/contracts/std_ref/Cargo.toml
 ```
 
-
 #### Option 2: Using Cargo Contract (Recommended)
 
 To compile the Standard Reference Contract, you'll need to use cargo-contract, a tool for working with smart contracts in the Rust programming language.
 
 1. Install Cargo contract
+
    - Step 1: `rustup component add rust-src`.
    - Step 2: `cargo install --force --locked cargo-contract`.
 
 2. Run the build command. For contracts intended to run in production, you should always build the contract with --release:
 
-    ```bash
-    cargo contract build --release
-    ```
+   ```bash
+   cargo contract build --release
+   ```
 
 ## Usage
 
@@ -55,20 +55,18 @@ pub enum QueryMsg {
     GetReferenceData {
         // Symbol pair to query where:
         // symbol_pair := (base_symbol, quote_symbol)
-        // e.g. BTC/USD ≡ 
+        // e.g. BTC/USD ≡
         // ("0000000000000000000000000000000000000000000000000000000000425443",
         // "0000000000000000000000000000000000000000000000000000000000555344")
         symbol_pair: (Hash, Hash),
     },
     GetReferenceDataBulk {
         // Vector of Symbol pair to query
-        // e.g. <BTC/USD ETH/USD, BAND/BTC> ≡ 
+        // e.g. <BTC/USD ETH/USD> ≡
         // <("0000000000000000000000000000000000000000000000000000000000425443",
         // "0000000000000000000000000000000000000000000000000000000000555344"),
         // ("0000000000000000000000000000000000000000000000000000000000455448",
-        // "0000000000000000000000000000000000000000000000000000000000555344"),
-        // ("0000000000000000000000000000000000000000000000000000000042414e44",
-        // "0000000000000000000000000000000000000000000000000000000000425443")>
+        // "0000000000000000000000000000000000000000000000000000000000555344")>
         symbol_pairs: Vec<(Hash, Hash)>,
     },
 }
@@ -114,9 +112,9 @@ The result from the `get_reference_data` function
 ```text
 {
   Ok: {
-    rate: '45,222,979,831,850,000,000,000,000,000,000',
+    rate: '45,222,979,831,850,000,000,000',
     baseResolveTime: '1,704,261,434',
-    quoteResolveTime: '1,704,261,434',
+    quoteResolveTime: '1,704,261,500',
   },
 }
 ```
@@ -124,9 +122,9 @@ The result from the `get_reference_data` function
 and the results can be interpreted as:
 
 - BTC/USD
-    - `rate = 45222.98 BTC/USD`
-    - `lastUpdatedBase = 1704261434`
-    - `lastUpdatedQuote = 1704261434`
+  - `rate = 45222.98 BTC/USD`
+  - `lastUpdatedBase = 1704261434`
+  - `lastUpdatedQuote = 1704261500`
 
 #### Bulk Query
 
@@ -146,16 +144,16 @@ The result from the `get_reference_data_bulk` function
 [
   {
     Ok: {
-      rate: '45,222,979,831,850,000,000,000,000,000,000',
+      rate: '45,222,979,831,850,000,000,000',
       baseResolveTime: '1,704,261,434',
-      quoteResolveTime: '1,704,261,434',
+      quoteResolveTime: '1,704,261,500',
     },
   },
   {
     Ok: {
-      rate: '2,378,489,377,900,000,000,000,000,000,000',
+      rate: '2,378,489,377,900,000,000,000',
       baseResolveTime: '1,704,261,434',
-      quoteResolveTime: '1,704,261,434',
+      quoteResolveTime: '1,704,261,500',
     },
   },
 ]
@@ -164,10 +162,10 @@ The result from the `get_reference_data_bulk` function
 and the results can be interpreted as:
 
 - BTC/USD
-    - `rate = 45222.98 BTC/USD`
-    - `lastUpdatedBase = 1704261434`
-    - `lastUpdatedQuote = 1704261434`
+  - `rate = 45222.98 BTC/USD`
+  - `lastUpdatedBase = 1704261434`
+  - `lastUpdatedQuote = 1704261500`
 - ETH/USD
-    - `rate = 2378.48 ETH/USD`
-    - `lastUpdatedBase = 1704261434`
-    - `lastUpdatedQuote = 1704261434`
+  - `rate = 2378.48 ETH/USD`
+  - `lastUpdatedBase = 1704261434`
+  - `lastUpdatedQuote = 1704261500`
