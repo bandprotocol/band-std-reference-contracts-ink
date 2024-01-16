@@ -6,6 +6,7 @@ mod reference_data;
 #[ink::contract]
 mod std_ref {
     use ink::env::set_code_hash;
+    use ink::prelude::string::String;
     use ink::prelude::vec::Vec;
     use ink::storage::Mapping;
 
@@ -19,8 +20,8 @@ mod std_ref {
         admin: AccountId,
         /// Mapping of the granted relayers
         relayers: Mapping<AccountId, ()>,
-        /// Mapping from hash of symbol to price datum
-        ref_data: Mapping<Hash, RefDatum>,
+        /// Mapping from String of symbol to price datum
+        ref_data: Mapping<String, RefDatum>,
     }
 
     /// Errors that can occur in the contract
@@ -61,7 +62,7 @@ mod std_ref {
             }
 
             set_code_hash(&code_hash)
-                .unwrap_or_else(|err| panic!("Failed to set code hash due to {:?}", err));
+                .unwrap_or_else(|err| panic!("Failed to set code String due to {:?}", err));
         }
 
         /// Returns the account ID of the contract.
@@ -129,7 +130,10 @@ mod std_ref {
 
         /// Returns the reference data for a given symbol
         #[ink(message)]
-        pub fn get_reference_data(&mut self, symbol_pair: (Hash, Hash)) -> Result<ReferenceData> {
+        pub fn get_reference_data(
+            &mut self,
+            symbol_pair: (String, String),
+        ) -> Result<ReferenceData> {
             let base = self.get_ref_data(&symbol_pair.0)?;
             let quote = self.get_ref_data(&symbol_pair.1)?;
 
@@ -140,7 +144,7 @@ mod std_ref {
         #[ink(message)]
         pub fn get_reference_data_bulk(
             &mut self,
-            symbol_pair: Vec<(Hash, Hash)>,
+            symbol_pair: Vec<(String, String)>,
         ) -> Vec<Result<ReferenceData>> {
             symbol_pair
                 .into_iter()
@@ -150,8 +154,8 @@ mod std_ref {
 
         /// Returns the ref data for a given symbol.
         #[inline]
-        fn get_ref_data(&mut self, symbol: &Hash) -> Result<RefDatum> {
-            if *symbol == Hash::from(USD) {
+        fn get_ref_data(&mut self, symbol: &str) -> Result<RefDatum> {
+            if symbol == USD {
                 return Ok(RefDatum::new(E9, Self::env().block_timestamp(), 0));
             }
 
@@ -162,7 +166,7 @@ mod std_ref {
         #[ink(message)]
         pub fn relay(
             &mut self,
-            symbol_rates: Vec<(Hash, u64)>,
+            symbol_rates: Vec<(String, u64)>,
             resolve_time: Timestamp,
             request_id: u64,
         ) -> Result<()> {
@@ -171,14 +175,14 @@ mod std_ref {
             }
 
             for (symbol, rate) in symbol_rates {
-                let ref_datum = match self.ref_data.get(symbol) {
+                let ref_datum = match self.ref_data.get(&symbol) {
                     Some(mut ref_datum) => {
                         ref_datum.update(rate, resolve_time, request_id);
                         ref_datum
                     }
                     None => RefDatum::new(rate, resolve_time, request_id),
                 };
-                self.ref_data.insert(symbol, &ref_datum);
+                self.ref_data.insert(&symbol, &ref_datum);
             }
 
             Ok(())
@@ -188,7 +192,7 @@ mod std_ref {
         #[ink(message)]
         pub fn force_relay(
             &mut self,
-            symbol_rates: Vec<(Hash, u64)>,
+            symbol_rates: Vec<(String, u64)>,
             resolve_time: Timestamp,
             request_id: u64,
         ) -> Result<()> {
@@ -262,9 +266,9 @@ mod std_ref {
             let mut std_ref = StandardReference::new(relay_admin);
 
             let symbol_rates = vec![
-                (Hash::from([0x01; 32]), E9),
-                (Hash::from([0x02; 32]), 2 * E9),
-                (Hash::from([0x03; 32]), 3 * E9),
+                ("BTC".to_string(), E9),
+                ("ETH".to_string(), 2 * E9),
+                ("BAND".to_string(), 3 * E9),
             ];
 
             let resolve_time = 1;
@@ -274,9 +278,9 @@ mod std_ref {
             assert_eq!(res, Ok(()));
 
             // check if the rates are updated
-            let symbol_pairs: Vec<(Hash, Hash)> = symbol_rates
+            let symbol_pairs: Vec<(String, String)> = symbol_rates
                 .iter()
-                .map(|(s, _)| (*s, Hash::from(USD)))
+                .map(|(s, _)| (s.clone(), USD.to_string()))
                 .collect();
             let rd = std_ref.get_reference_data_bulk(symbol_pairs);
 
@@ -291,27 +295,27 @@ mod std_ref {
             let mut std_ref = StandardReference::new(relay_admin);
 
             let symbol_rates = vec![
-                (Hash::from([0x01; 32]), E9),
-                (Hash::from([0x02; 32]), 2 * E9),
-                (Hash::from([0x03; 32]), 3 * E9),
+                ("BTC".to_string(), E9),
+                ("ETH".to_string(), 2 * E9),
+                ("BAND".to_string(), 3 * E9),
             ];
 
             let res = std_ref.relay(symbol_rates.clone(), 1, 1);
             assert_eq!(res, Ok(()));
 
             let symbol_rates = vec![
-                (Hash::from([0x01; 32]), 2 * E9),
-                (Hash::from([0x02; 32]), 4 * E9),
-                (Hash::from([0x03; 32]), 8 * E9),
+                ("BTC".to_string(), 2 * E9),
+                ("ETH".to_string(), 4 * E9),
+                ("BAND".to_string(), 8 * E9),
             ];
 
             let res = std_ref.relay(symbol_rates.clone(), 2, 2);
             assert_eq!(res, Ok(()));
 
             // check if the rates are updated
-            let symbol_pairs: Vec<(Hash, Hash)> = symbol_rates
+            let symbol_pairs: Vec<(String, String)> = symbol_rates
                 .iter()
-                .map(|(s, _)| (*s, Hash::from(USD)))
+                .map(|(s, _)| (s.clone(), USD.to_string()))
                 .collect();
             let rd = std_ref.get_reference_data_bulk(symbol_pairs);
 
@@ -326,27 +330,27 @@ mod std_ref {
             let mut std_ref = StandardReference::new(relay_admin);
 
             let symbol_rates = vec![
-                (Hash::from([0x01; 32]), E9),
-                (Hash::from([0x02; 32]), 2 * E9),
-                (Hash::from([0x03; 32]), 3 * E9),
+                ("BTC".to_string(), E9),
+                ("ETH".to_string(), 2 * E9),
+                ("BAND".to_string(), 3 * E9),
             ];
 
             let res = std_ref.relay(symbol_rates.clone(), 5, 5);
             assert_eq!(res, Ok(()));
 
             let stale_symbol_rates = vec![
-                (Hash::from([0x01; 32]), 2 * E9),
-                (Hash::from([0x02; 32]), 4 * E9),
-                (Hash::from([0x03; 32]), 8 * E9),
+                ("BTC".to_string(), 2 * E9),
+                ("ETH".to_string(), 4 * E9),
+                ("BAND".to_string(), 8 * E9),
             ];
 
             let res = std_ref.relay(stale_symbol_rates.clone(), 2, 2);
             assert_eq!(res, Ok(()));
 
             // check if the rates are updated
-            let symbol_pairs: Vec<(Hash, Hash)> = symbol_rates
+            let symbol_pairs: Vec<(String, String)> = symbol_rates
                 .iter()
-                .map(|(s, _)| (*s, Hash::from(USD)))
+                .map(|(s, _)| (s.clone(), String::from(USD)))
                 .collect();
             let rd = std_ref.get_reference_data_bulk(symbol_pairs);
 
