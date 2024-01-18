@@ -20,7 +20,7 @@ mod std_ref {
         admin: AccountId,
         // Mapping of the granted relayers
         relayers: Mapping<AccountId, ()>,
-        // Mapping from String of symbol to price datum
+        // Mapping from string of symbol to price datum
         ref_data: Mapping<String, RefDatum>,
     }
 
@@ -219,7 +219,6 @@ mod std_ref {
             std_ref
         }
 
-        // We test if the default constructor does its job.
         #[ink::test]
         fn test_init() {
             let admin = AccountId::from([0x01; 32]);
@@ -227,7 +226,21 @@ mod std_ref {
             assert_eq!(std_ref.current_admin(), admin);
         }
 
-        // We test a simple use case of our contract.
+        #[ink::test]
+        fn test_transfer_admin() {
+            let admin = AccountId::from([0x01; 32]);
+            let new_admin = AccountId::from([0x02; 32]);
+            let relayer = AccountId::from([0x03; 32]);
+
+            let mut std_ref = StandardReference::new(admin);
+            let _ = std_ref.add_relayers(vec![relayer]);
+
+            // Transfer admin role successfully
+            let result = std_ref.transfer_admin(new_admin);
+            assert_eq!(result, Ok(()));
+            assert_eq!(std_ref.current_admin(), new_admin);
+        }
+
         #[ink::test]
         fn test_add_relayers() {
             let admin = AccountId::from([0x01; 32]);
@@ -261,7 +274,7 @@ mod std_ref {
         }
 
         #[ink::test]
-        fn test_success_relay() {
+        fn test_relay_success() {
             let relay_admin = AccountId::from([0x01; 32]);
             let mut std_ref = StandardReference::new(relay_admin);
 
@@ -287,6 +300,25 @@ mod std_ref {
             for ((_, o), r) in symbol_rates.iter().zip(rd) {
                 assert_eq!((o * E9) as u128, r.unwrap().rate);
             }
+        }
+
+        #[ink::test]
+        fn test_force_relay_success() {
+            let admin = AccountId::from([0x01; 32]);
+            let relayer = AccountId::from([0x02; 32]);
+
+            let mut std_ref = StandardReference::new(admin);
+            let _ = std_ref.add_relayers(vec![relayer]);
+
+            // Force relay successfully
+            let result = std_ref.force_relay(vec![("BTC".to_string(), E9)], 1, 1);
+            assert_eq!(result, Ok(()));
+
+            // Check if the rate is updated
+            let r: core::prelude::v1::Result<ReferenceData, Error> =
+                std_ref.get_reference_data(("BTC".to_string(), "USD".to_string()));
+
+            assert_eq!((E9 * E9) as u128, r.unwrap().rate);
         }
 
         #[ink::test]
