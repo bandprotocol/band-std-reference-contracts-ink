@@ -88,7 +88,15 @@ pub struct ReferenceData {
 
 ### Using the Contracts UI
 
-This example use [StdReferenceBasic contract](https://contracts-ui.substrate.io/contract/YhesbtnjHC7srVHN2f69vQiRwwLNYBTuUN15Z5NJzygimrF) on Astar Shibuya.
+This example use [StdReferenceBasic contract](https://shibuya.subscan.io/account/YhesbtnjHC7srVHN2f69vQiRwwLNYBTuUN15Z5NJzygimrF) on Astar Shibuya.
+
+Follow these steps:
+
+1. Navigate to https://contracts-ui.substrate.io/address-lookup
+2. Paste the contract address `YhesbtnjHC7srVHN2f69vQiRwwLNYBTuUN15Z5NJzygimrF`
+3. Modify the contract's name
+4. upload metadata from `band-std-reference-contracts-ink/contracts/std_ref/metadata/standard_reference.json`
+5. You can now interact with the contract
 
 #### Single Query
 
