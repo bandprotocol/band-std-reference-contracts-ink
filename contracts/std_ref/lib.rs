@@ -16,30 +16,30 @@ mod std_ref {
 
     #[ink(storage)]
     pub struct StandardReference {
-        // Address of admin who can grant/revoke relayers
+        /// Address of admin who can grant/revoke relayers
         admin: AccountId,
-        // Mapping of the granted relayers
+        /// Mapping of the granted relayers
         relayers: Mapping<AccountId, ()>,
-        // Mapping from string of symbol to price datum
+        /// Mapping from string of symbol to price datum
         ref_data: Mapping<String, RefDatum>,
     }
 
-    // Errors that can occur in the contract
+    /// Errors that can occur in the contract
     #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub enum Error {
-        // Returned if the pair is invalid.
+        /// Returned if the pair is invalid.
         PairDoesNotExist,
-        // Returned if the value is invalid.
+        /// Returned if the value is invalid.
         InvalidValue,
-        // Returned if unauthorized caller tries to call a function that requires authorization.
+        /// Returned if unauthorized caller tries to call a function that requires authorization.
         Unauthorized,
     }
 
     pub type Result<T> = core::result::Result<T, Error>;
 
     impl StandardReference {
-        // Creates a new StandardReference Contract
+        /// Creates a new StandardReference Contract
         #[ink(constructor)]
         pub fn new(admin: AccountId) -> Self {
             let mut relayers = Mapping::new();
@@ -54,7 +54,7 @@ mod std_ref {
             }
         }
 
-        // Upgrades the StandardReference contract
+        /// Upgrades the StandardReference contract
         #[ink(message)]
         pub fn upgrade(&mut self, code_hash: [u8; 32]) {
             if self.admin != self.env().caller() {
@@ -65,19 +65,19 @@ mod std_ref {
                 .unwrap_or_else(|err| panic!("Failed to set code hash due to {:?}", err));
         }
 
-        // Returns the account ID of the contract.
+        /// Returns the account ID of the contract.
         #[ink(message)]
         pub fn contract_id(&self) -> AccountId {
             Self::env().account_id()
         }
 
-        // Returns the account ID of the current contract admin.
+        /// Returns the account ID of the current contract admin.
         #[ink(message)]
         pub fn current_admin(&self) -> AccountId {
             self.admin
         }
 
-        // Transfers the admin role to a new admin.
+        /// Transfers the admin role to a new admin.
         #[ink(message)]
         pub fn transfer_admin(&mut self, new_admin: AccountId) -> Result<()> {
             if self.admin != self.env().caller() {
@@ -87,24 +87,24 @@ mod std_ref {
             Ok(())
         }
 
-        // Checks if caller is relayer.
+        /// Checks if caller is relayer.
         #[ink(message)]
         pub fn is_relayer(&self, relayer: AccountId) -> bool {
             self.is_relayer_impl(&relayer)
         }
 
-        // Checks if caller is relayer.
-        //
-        // # Note
-        //
-        // Prefer to call this method over `is_relayer` since this
-        // works using references which are more efficient in Wasm.
+        /// Checks if caller is relayer.
+        ///
+        /// # Note
+        ///
+        /// Prefer to call this method over `is_relayer` since this
+        /// works using references which are more efficient in Wasm.
         #[inline]
         fn is_relayer_impl(&self, relayer: &AccountId) -> bool {
             self.relayers.contains(relayer)
         }
 
-        // Adds relayers.
+        /// Adds relayers.
         #[ink(message)]
         pub fn add_relayers(&mut self, relayers: Vec<AccountId>) -> Result<()> {
             if self.admin != self.env().caller() {
@@ -116,7 +116,7 @@ mod std_ref {
             Ok(())
         }
 
-        // Removes relayers.
+        /// Removes relayers.
         #[ink(message)]
         pub fn remove_relayers(&mut self, relayers: Vec<AccountId>) -> Result<()> {
             if self.admin != self.env().caller() {
@@ -128,7 +128,7 @@ mod std_ref {
             Ok(())
         }
 
-        // Returns the reference data for a given symbol
+        /// Returns the reference data for a given symbol
         #[ink(message)]
         pub fn get_reference_data(
             &mut self,
@@ -140,7 +140,7 @@ mod std_ref {
             ReferenceData::from_ref_data_pair(base, quote)
         }
 
-        // Returns the reference data for multiple bas/quote at once
+        /// Returns the reference data for multiple bas/quote at once
         #[ink(message)]
         pub fn get_reference_data_bulk(
             &mut self,
@@ -152,7 +152,7 @@ mod std_ref {
                 .collect()
         }
 
-        // Returns the ref data for a given symbol.
+        /// Returns the ref data for a given symbol.
         #[inline]
         fn get_ref_data(&mut self, symbol: &str) -> Result<RefDatum> {
             if symbol == USD {
@@ -162,7 +162,7 @@ mod std_ref {
             self.ref_data.get(symbol).ok_or(Error::PairDoesNotExist)
         }
 
-        // Relays the data to the contract
+        /// Relays the data to the contract
         #[ink(message)]
         pub fn relay(
             &mut self,
@@ -188,7 +188,7 @@ mod std_ref {
             Ok(())
         }
 
-        // Relays the data to the contract without checking timestamp
+        /// Relays the data to the contract without checking timestamp
         #[ink(message)]
         pub fn force_relay(
             &mut self,
