@@ -55,19 +55,13 @@ pub enum QueryMsg {
     GetReferenceData {
         // Symbol pair to query where:
         // symbol_pair := (base_symbol, quote_symbol)
-        // e.g. BTC/USD ≡
-        // ("0000000000000000000000000000000000000000000000000000000000425443",
-        // "0000000000000000000000000000000000000000000000000000000000555344")
-        symbol_pair: (Hash, Hash),
+        // e.g. BTC/USD = ("BTC","USD")
+        symbol_pair: (String, String),
     },
     GetReferenceDataBulk {
         // Vector of Symbol pair to query
-        // e.g. <BTC/USD ETH/USD> ≡
-        // <("0000000000000000000000000000000000000000000000000000000000425443",
-        // "0000000000000000000000000000000000000000000000000000000000555344"),
-        // ("0000000000000000000000000000000000000000000000000000000000455448",
-        // "0000000000000000000000000000000000000000000000000000000000555344")>
-        symbol_pairs: Vec<(Hash, Hash)>,
+        // e.g. <BTC/USD ETH/USD> = <("BTC","USD"),("ETH","USD")>
+        symbol_pairs: Vec<(String, String)>,
     },
 }
 ```
@@ -94,16 +88,11 @@ pub struct ReferenceData {
 
 ### Using the Contracts UI
 
-This example use [StdReferenceBasic contract](https://contracts-ui.substrate.io/contract/WiTDVGWuPawbS2ysrE78EpU7Ky3M5WEsZzGN95B5YuPn6Kx) on Astar Shibuya.
+This example use [StdReferenceBasic contract](https://contracts-ui.substrate.io/contract/YhesbtnjHC7srVHN2f69vQiRwwLNYBTuUN15Z5NJzygimrF) on Astar Shibuya.
 
 #### Single Query
 
-This example demonstrates how to query the price of cryptocurrencies, such as BTC/USD and ETH/USD, using the provided hashing function and the get_reference_data function.
-
-To query the price of a cryptocurrency pair, you need to first hash the symbols of the base and quote currencies. Here are the hashes for BTC and ETH:
-
-- Hash("BTC") = "0000000000000000000000000000000000000000000000000000000000425443"
-- Hash("USD") = "0000000000000000000000000000000000000000000000000000000000555344"
+This example demonstrates how to query the price of cryptocurrencies, such as BTC/USD and ETH/USD, using the get_reference_data function.
 
 ![get_reference_data](img/get_reference_data.png)
 
@@ -112,9 +101,9 @@ The result from the `get_reference_data` function
 ```text
 {
   Ok: {
-    rate: '45,222,979,831,850,000,000,000',
-    baseResolveTime: '1,704,261,434',
-    quoteResolveTime: '1,704,261,500',
+    rate: '42,796,574,079,000,000,000,000',
+    baseResolveTime: '1,705,393,635',
+    quoteResolveTime: '1,705,566,198',
   },
 }
 ```
@@ -122,19 +111,13 @@ The result from the `get_reference_data` function
 and the results can be interpreted as:
 
 - BTC/USD
-  - `rate = 45222.98 BTC/USD`
-  - `lastUpdatedBase = 1704261434`
-  - `lastUpdatedQuote = 1704261500`
+  - `rate = 42796.57 BTC/USD`
+  - `lastUpdatedBase = 1705393635`
+  - `lastUpdatedQuote = 1705566198`
 
 #### Bulk Query
 
 This example demonstrates how to perform bulk queries for multiple cryptocurrency pairs using the get_reference_data_bulk function.
-
-Before making a bulk query, you need to hash the symbols of the base and quote currencies for each pair. Here are the hashes for BTC, ETH, and USD:
-
-- Hash("BTC") = "0000000000000000000000000000000000000000000000000000000000425443"
-- Hash("ETH") = "0000000000000000000000000000000000000000000000000000000000455448"
-- Hash("USD") = "0000000000000000000000000000000000000000000000000000000000555344"
 
 ![get_reference_data_bulk](/img/get_reference_data_bulk.png)
 
@@ -144,16 +127,16 @@ The result from the `get_reference_data_bulk` function
 [
   {
     Ok: {
-      rate: '45,222,979,831,850,000,000,000',
-      baseResolveTime: '1,704,261,434',
-      quoteResolveTime: '1,704,261,500',
+      rate: '42,796,574,079,000,000,000,000',
+      baseResolveTime: '1,705,393,635',
+      quoteResolveTime: '1,705,566,390',
     },
   },
   {
     Ok: {
-      rate: '2,378,489,377,900,000,000,000',
-      baseResolveTime: '1,704,261,434',
-      quoteResolveTime: '1,704,261,500',
+      rate: '2,529,382,050,297,000,000,000',
+      baseResolveTime: '1,705,393,635',
+      quoteResolveTime: '1,705,566,390',
     },
   },
 ]
@@ -162,10 +145,10 @@ The result from the `get_reference_data_bulk` function
 and the results can be interpreted as:
 
 - BTC/USD
-  - `rate = 45222.98 BTC/USD`
-  - `lastUpdatedBase = 1704261434`
-  - `lastUpdatedQuote = 1704261500`
+  - `rate = 42796.57 BTC/USD`
+  - `lastUpdatedBase = 1705393635`
+  - `lastUpdatedQuote = 1705566198`
 - ETH/USD
-  - `rate = 2378.48 ETH/USD`
-  - `lastUpdatedBase = 1704261434`
-  - `lastUpdatedQuote = 1704261500`
+  - `rate = 2529.38 ETH/USD`
+  - `lastUpdatedBase = 1705393635`
+  - `lastUpdatedQuote = 1705566198`
