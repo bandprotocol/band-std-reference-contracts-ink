@@ -156,7 +156,7 @@ mod std_ref {
         #[inline]
         fn get_ref_data(&mut self, symbol: &str) -> Result<RefDatum> {
             if symbol == USD {
-                return Ok(RefDatum::new(E9, Self::env().block_timestamp(), 0));
+                return Ok(RefDatum::new(E9, Self::env().block_timestamp() / 1000, 0));
             }
 
             self.ref_data.get(symbol).ok_or(Error::PairDoesNotExist)
