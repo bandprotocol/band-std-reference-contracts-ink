@@ -20,7 +20,7 @@ mod std_ref {
         admin: AccountId,
         /// Mapping of the granted relayers
         relayers: Mapping<AccountId, ()>,
-        /// Mapping from string of symbol to price datum
+        /// Mapping from symbol to reference datum
         ref_data: Mapping<String, RefDatum>,
     }
 
