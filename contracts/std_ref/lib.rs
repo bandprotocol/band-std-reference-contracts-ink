@@ -132,10 +132,10 @@ mod std_ref {
         #[ink(message)]
         pub fn get_reference_data(
             &mut self,
-            symbol_pair: (String, String),
+            symbol_pairs: (String, String),
         ) -> Result<ReferenceData> {
-            let base = self.get_ref_data(&symbol_pair.0)?;
-            let quote = self.get_ref_data(&symbol_pair.1)?;
+            let base = self.get_ref_data(&symbol_pairs.0)?;
+            let quote = self.get_ref_data(&symbol_pairs.1)?;
 
             ReferenceData::from_ref_data_pair(base, quote)
         }
@@ -144,9 +144,9 @@ mod std_ref {
         #[ink(message)]
         pub fn get_reference_data_bulk(
             &mut self,
-            symbol_pair: Vec<(String, String)>,
+            symbol_pairs: Vec<(String, String)>,
         ) -> Vec<Result<ReferenceData>> {
-            symbol_pair
+            symbol_pairs
                 .into_iter()
                 .map(|pair| self.get_reference_data(pair))
                 .collect()
