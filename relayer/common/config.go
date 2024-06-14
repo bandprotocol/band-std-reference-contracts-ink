@@ -12,9 +12,7 @@ type Config struct {
 	ServiceName     string         `json:"service_name"`
 	MaxTry          int            `json:"max_try"`
 	TxWaitingPeriod string         `json:"tx_waiting_period"`
-	CheckTxInterval string         `json:"check_tx_interval"`
 	NonceInterval   string         `json:"nonce_interval"`
-	GasMultiplier   float64        `json:"gas_multiplier"`
 	RpcEndpoints    []string       `json:"rpc_endpoints"`
 	Senders         []string       `json:"senders"`
 	Contract        string         `json:"contract"`
@@ -23,5 +21,4 @@ type Config struct {
 	LogLevel        string         `json:"log_level"`
 	Subs            []PubSubConfig `json:"subs"`
 	Network         string         `json:"network"`
-	ChainId         uint64         `json:"chain_id"`
 }
