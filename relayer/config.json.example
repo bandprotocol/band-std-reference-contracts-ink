@@ -1,0 +1,30 @@
+{
+    "service_name": "testnet_shibuya_ink",
+    "max_try": 3,
+    "tx_waiting_period": "300s",
+    "nonce_interval": "3s",
+    "rpc_endpoints": [
+        "wss://rpc.shibuya.astar.network",
+        "wss://shibuya.public.blastapi.io",
+        "wss://shibuya-rpc.dwellir.com"
+    ],
+    "contract": "893c546cbf05e928d57e42f3c421a6246d3c738a1e95909866d5f72334d3d061",
+    "result_pointer": "02000100000000000000000000000000000000000000000000",
+    "project_id": "project-id",
+    "log_level": "info",
+    "network": "shibuya-ink",
+    "tip": 0,
+    "senders": [
+        "av2LAxSYickjfcMsoeRV892gWmxdXrC4HUoYxdnAC4GPGNR"
+    ],
+    "signer_url": "http://10.0.0.1/testnet-shibuya-ink",
+    "subs": [
+        {
+            "sub_id": "sub-id",
+            "topic_id": "topic-id",
+            "pubsub_ack_deadline_time": "2m",
+            "pubsub_retention_duration": "10m",
+            "pubsub_client_id_filter": "Astar"
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_CONN")
+}
+
+model Request {
+  id        Int       @id @default(autoincrement())
+  network   String?   @db.VarChar(255)
+  payload   String?
+  response  String?
+  error     String?
+  success   Boolean?
+  createdAt DateTime? @map("created_at") @default(now()) @db.Timestamp(6)
+  note      String?   @db.VarChar
+
+  @@index([id])
+  @@map("requests")
+}

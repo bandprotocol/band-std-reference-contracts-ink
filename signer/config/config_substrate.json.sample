@@ -1,0 +1,10 @@
+{
+  "chain_type": "substrate",
+  "network": "shibuya-testnet",
+  "ss58_format": "5",
+  "rpc_url": "https://rpc.shibuya.astar.network",
+  "maxRefTime": "5000000000",
+  "maxProofSize": "150000",
+  "account": 0,
+  "contract_address": "Z3EmuoJVxPzJizrhN966f8qkCQ7NePbjMZkYn7X8bBnPKDg"
+}
